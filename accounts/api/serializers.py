@@ -55,15 +55,13 @@ class LoginSerializer(serializers.Serializer):
     def get_token(self,data):
         print(data['username'])
 
-        user = authenticate(username=data['username'],password = ['password'])
+        user = authenticate(username=data['username'].lower(),password = ['password'])
         if user is None:
             return {'msg' : 'invalid credentials'}
         
-        refresh = RefreshToken.for_user(user)
-        
-        return {'msg' : 'logged in',"data" : {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    }}
+        response = {
+            'msg' : 'logged In'
+        }
 
+        return response
     

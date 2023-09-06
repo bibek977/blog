@@ -47,9 +47,8 @@ class LoginApi(APIView):
                     'msg' : 'serilaization data is not valid'
                 }
                 return Response(response,status=status.HTTP_404_NOT_FOUND)
-            r = serializer.get_token()
             response = {
-                'data': r,
+                'data': [],
                 'msg' : 'User Lgged In'
             }
             return Response(response,status=status.HTTP_302_FOUND)
