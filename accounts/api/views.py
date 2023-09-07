@@ -12,20 +12,17 @@ class UserCreateApi(APIView):
             data = request.data
             serializer = UserSerializer(data=data)
 
-            if serializer.is_valid():
-                serializer.save()
+            if not serializer.is_valid():            
                 response = {
-                    'data': serializer.data,
-                    'msg' : 'User Created'
-                }
-                return Response(response,status=status.HTTP_201_CREATED)
-            
-            else:
-                 response = {
                      'data' : serializer.errors,
                      'msg' : 'serilaization data is not valid'
                  }
-                 return Response(response,status=status.HTTP_406_NOT_ACCEPTABLE)
+                return Response(response,status=status.HTTP_406_NOT_ACCEPTABLE)
+            response = {
+                    'data': [serializer.data],
+                    'msg' : 'User created'
+                }
+            return Response(response,status=status.HTTP_201_CREATED)
             
         except Exception as e:
 
@@ -40,18 +37,18 @@ class LoginApi(APIView):
             data = request.data
             serializer = LoginSerializer(data=data)
 
-            if not serializer.is_valid():
+            if serializer.is_valid():
+                response = serializer.get_jwt_token(serializer.data)
 
+
+                return Response(response,status=status.HTTP_302_FOUND)
+
+            else:
                 response = {
-                    'data' : serializer.errors,
+                    'data' : [serializer.errors],
                     'msg' : 'serilaization data is not valid'
                 }
                 return Response(response,status=status.HTTP_404_NOT_FOUND)
-            response = {
-                'data': [],
-                'msg' : 'User Lgged In'
-            }
-            return Response(response,status=status.HTTP_302_FOUND)
 
 
         except Exception as e:
