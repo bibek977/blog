@@ -35,8 +35,9 @@ class UserSerializer(serializers.Serializer):
             first_name = validated_data['first_name'],
             last_name = validated_data['last_name'],
         )
-        user.set_password(validated_data['password'])
-
+        user.set_password(validated_data["password"])
+        user.save()
+        print(user.password)
         return validated_data
     
 
@@ -46,23 +47,23 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
 
-    # def validate(self, data):
-        # if not User.objects.filter(username = data['username'].lower()).exists():
-        #     return serializers.ValidationError("data not found")
+    def validate(self, data):
+        if not User.objects.filter(username = data['username']).exists():
+            return serializers.ValidationError("data not found")
         
-        # return data
+        return data
     
     # def get_tokens_for_user(self,data):
     def get_jwt_token(self,data):
 
         user = authenticate( username = data['username'] , password = data['password'])
         if not user:
-            return {'msg' : 'invalid credentials'}
+            return {'msg' : 'invalid credentials', 'data' : data}
 
         refresh = RefreshToken.for_user(user)
 
         return {
         'refresh': str(refresh),
         'access': str(refresh.access_token),
-    }
+}
     

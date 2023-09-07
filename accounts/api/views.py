@@ -18,6 +18,8 @@ class UserCreateApi(APIView):
                      'msg' : 'serilaization data is not valid'
                  }
                 return Response(response,status=status.HTTP_406_NOT_ACCEPTABLE)
+
+            serializer.save()
             response = {
                     'data': [serializer.data],
                     'msg' : 'User created'
