@@ -37,7 +37,7 @@ class UserSerializer(serializers.Serializer):
         )
         user.set_password(validated_data["password"])
         user.save()
-        print(user.password)
+
         return validated_data
     
 
@@ -48,12 +48,11 @@ class LoginSerializer(serializers.Serializer):
 
 
     def validate(self, data):
-        if not User.objects.filter(username = data['username']).exists():
+        if not User.objects.filter(username = data['username'].lower()).exists():
             return serializers.ValidationError("data not found")
         
         return data
     
-    # def get_tokens_for_user(self,data):
     def get_jwt_token(self,data):
 
         user = authenticate( username = data['username'] , password = data['password'])
