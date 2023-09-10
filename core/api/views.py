@@ -7,10 +7,24 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
 from core.models import Blog
 from django.db.models import Q
+from taggit.models import Tag
+from django.shortcuts import get_object_or_404
 
-class ShowApi(ListAPIView):
-    queryset = Blog.objects.all()
-    serializer_class = BlogModelSerializer
+
+class ShowApi(views.APIView):
+
+    def get(self,request,tag_slug=None):
+        tag = None
+        if tag_slug:
+            tag = get_object_or_404(Tag,slug=tag_slug)
+            blog = Blog.objects.filter(tags__name__in=[tag])
+            serializer = BlogModelSerializer(blog,many=True)
+            return Response({'data':serializer.data})
+        
+        blog = Blog.objects.all()
+    
+        serializer = BlogModelSerializer(blog,many=True)
+        return Response({'data':serializer.data})
 
 
 class BlogApi(views.APIView):
@@ -32,6 +46,7 @@ class BlogApi(views.APIView):
             "msg" : f"All Blogs of {request.user}"
         }
         return Response(response,status=status.HTTP_302_FOUND)
+
 
     def post(self,request):
 

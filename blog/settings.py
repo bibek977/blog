@@ -45,6 +45,7 @@ EXTERNAL_APPS = [
     'rest_framework',
     'core',
     'accounts',
+    'taggit'
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS
