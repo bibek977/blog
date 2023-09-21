@@ -16,7 +16,7 @@ class Blog(BaseModel):
 
     title = models.CharField(max_length=400)
     description = models.TextField()
-    image = models.ImageField(upload_to="media")
+    image = models.ImageField(upload_to="media",default="media/image_6_us4UWU4.png")
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blogs")
     tags = TaggableManager()
 
