@@ -13,14 +13,17 @@ from django.shortcuts import get_object_or_404
 
 class ShowApi(views.APIView):
 
-    def get(self,request,tag_slug=None):
+    def get(self,request,tag_slug=None,id=None):
         tag = None
         if tag_slug:
             tag = get_object_or_404(Tag,slug=tag_slug)
             blog = Blog.objects.filter(tags__name__in=[tag])
             serializer = BlogModelSerializer(blog,many=True)
             return Response({'data':serializer.data})
-        
+        elif id:
+            blog = Blog.objects.get(id=id)
+            serializer = BlogModelSerializer(blog)
+            return Response({'data':serializer.data})
         blog = Blog.objects.all()
     
         serializer = BlogModelSerializer(blog,many=True)
@@ -32,7 +35,7 @@ class BlogApi(views.APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    def get(self,request):
+    def get(self,request,id=None):
         
         blog = Blog.objects.filter(author = request.user)
 
@@ -40,6 +43,10 @@ class BlogApi(views.APIView):
             search = request.GET.get('search')
             blog = blog.filter(Q(description__icontains = search | Q(title__icontains = search)))
 
+        elif id:
+            blog = Blog.objects.get(id=id)
+            serializer = BlogModelSerializer(blog)
+            return Response({'data':serializer.data})
         serializer = BlogModelSerializer(blog, many=True)
         response = {
             'data' : serializer.data,
