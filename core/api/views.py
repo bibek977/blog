@@ -24,6 +24,13 @@ class ShowApi(views.APIView):
             blog = Blog.objects.get(id=id)
             serializer = BlogModelSerializer(blog)
             return Response({'data':serializer.data})
+        
+        if request.GET.get('search'):
+            search = request.GET.get('search')
+            blog = Blog.objects.filter(Q(description__icontains = search) | Q(title__icontains = search))
+            serializer = BlogModelSerializer(blog,many=True)
+            return Response({'data':serializer.data})
+
         blog = Blog.objects.all()
     
         serializer = BlogModelSerializer(blog,many=True)
@@ -41,7 +48,7 @@ class BlogApi(views.APIView):
 
         if request.GET.get('search'):
             search = request.GET.get('search')
-            blog = blog.filter(Q(description__icontains = search | Q(title__icontains = search)))
+            blog = blog.filter(Q(description__icontains = search) | Q(title__icontains = search))
 
         elif id:
             blog = Blog.objects.get(id=id)
